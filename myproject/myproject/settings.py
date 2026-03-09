@@ -82,16 +82,17 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# Database configuration
 DATABASES = {
     'default': dj_database_url.config(
-        # Replace with your local sqlite if DATABASE_URL is not set
         default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
+        conn_max_age=600,
+        ssl_require=True if os.environ.get('DATABASE_URL') else False
     )
 }
 
-# If DATABASE_URL is not set (locally), fallback to SQLite
-if not DATABASES['default']:
+# Final check: if dj_database_url.config returned nothing (e.g. env var missing), use SQLite
+if not DATABASES.get('default'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
