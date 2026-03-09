@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-dark: #0F172A;
+            --bg-card: #1E293B;
+            --text-light: #F8FAFC;
+            --text-muted: #94A3B8;
+            --input-bg: #0F172A;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .back-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 20px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--text-light);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: var(--input-bg);
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            color: white;
+            background: var(--primary);
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .current-image {
+            margin-top: 15px;
+            display: inline-block;
+            background: var(--input-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .current-image p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .current-image img {
+            border-radius: 8px;
+            object-fit: cover;
+            width: 150px;
+            height: 150px;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <a href="{% url 'dashboard' %}" class="back-btn" title="Back to Dashboard"><i
+                        class="fa-solid fa-arrow-left"></i></a>
+                <h1>{{ title }}</h1>
+            </div>
+
+            <!-- multipart/form-data is required for image fields -->
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Product Name <span style="color:var(--danger)">*</span></label>
+                    <input type="text" name="name" value="{{ product.name|default:'' }}" required
+                        placeholder="e.g. Trendy Cotton T-Shirt">
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea name="description"
+                        placeholder="A brief description of this product...">{{ product.description|default:'' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Price in ₹ <span style="color:var(--danger)">*</span></label>
+                    <input type="number" step="0.01" name="price" value="{{ product.price|default:'' }}" required
+                        placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Product Image {% if product.image %}(Select to change){% endif %}</label>
+                    <input type="file" name="image" accept="image/*">
+
+                    {% if product.image %}
+                    <div class="current-image">
+                        <p>Current Image:</p>
+                        <img src="{{ product.image.url }}" alt="Current image">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Save Product</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
